@@ -1,34 +1,42 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { BankService } from './bank.service';
-import { CreateBankDto } from './dto/create-bank.dto';
-import { UpdateBankDto } from './dto/update-bank.dto';
+import {
+  Controller, Get, Post,
+  Body, Param, ParseIntPipe, UseGuards,
+} from '@nestjs/common';
+import { ApiKeyGuard }      from '../auth/api-key.guard';
+import { BankService }      from './bank.service';
+import { CreateAccountDto } from 'src/finance/dto/create-account.dto';
+import { CreateLoanDto } from 'src/finance/dto/create-loan.dto';
+
 
 @Controller('bank')
+@UseGuards(ApiKeyGuard)   // todos los endpoints de este controlador son privados
 export class BankController {
-  constructor(private readonly bankService: BankService) {}
+  constructor(private bank: BankService) {}
 
-  @Post()
-  create(@Body() createBankDto: CreateBankDto) {
-    return this.bankService.create(createBankDto);
+  // POST /bank/accounts
+  @Post('accounts')
+  createAccount(@Body() dto: CreateAccountDto) {
+    return this.bank.createAccount(dto);
   }
 
-  @Get()
-  findAll() {
-    return this.bankService.findAll();
+  // GET /bank/accounts  →  trae cuentas con sus préstamos
+  @Get('accounts')
+  findAccounts() {
+    return this.bank.findAccounts();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.bankService.findOne(+id);
+  // POST /bank/accounts/:id/loans
+  @Post('accounts/:id/loans')
+  createLoan(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: CreateLoanDto,
+  ) {
+    return this.bank.createLoan(id, dto);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBankDto: UpdateBankDto) {
-    return this.bankService.update(+id, updateBankDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.bankService.remove(+id);
+  // GET /bank/accounts/:id/loans
+  @Get('accounts/:id/loans')
+  findLoans(@Param('id', ParseIntPipe) id: number) {
+    return this.bank.findLoans(id);
   }
 }
