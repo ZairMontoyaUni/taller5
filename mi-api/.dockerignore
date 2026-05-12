@@ -1,0 +1,14 @@
+node_modules
+/dist
+/build
+/postgres
+coverage
+.nyc_output
+.git
+.gitignore
+.vscode
+.env
+.env.*
+Dockerfile
+README.md
+SWAGGER_SETUP.md
