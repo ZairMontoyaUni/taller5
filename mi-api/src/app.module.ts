@@ -1,24 +1,24 @@
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { BankModule } from './bank/bank.module';
-import { FinanceModule } from './finance/finance.module';
-import { CalcModule } from './calc/calc.module';
+
 import { AuthModule } from './auth/auth.module';
-import { Account } from './bank/entities/account.entity';
-import { Loan } from './bank/entities/loan.entity';
+
 import { Module } from '@nestjs/common';
+import { MetricsModule } from './metrics/metrics.module';
+import { UsersModule } from './users/users.module';
+import { PostsModule } from './posts/posts.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type:        'better-sqlite3',
-      database:    'banco.db',     // archivo local
-      entities:    [Account, Loan],
+      database:    'instagram.db',     // archivo local
+      autoLoadEntities: true,
       synchronize: true,           // solo dev
     }),
     AuthModule,
-    CalcModule,
-    FinanceModule,
-    BankModule,                    // ← nuevo
+    MetricsModule,
+    UsersModule,
+    PostsModule,                  // ← nuevo
   ],
 })
 export class AppModule {}
